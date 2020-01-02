@@ -17,6 +17,7 @@ import java.util.HashMap;
  */
 public class EscposprinterPlugin implements MethodCallHandler {
   private static USBPrinterAdapter adapter;
+
   /**
    * Plugin registration.
    */
@@ -48,45 +49,44 @@ public class EscposprinterPlugin implements MethodCallHandler {
     }
   }
 
-    public void getUSBDeviceList(Result result) {
-        List<UsbDevice> usbDevices = adapter.getDeviceList();
-        ArrayList<HashMap> list = new ArrayList<HashMap>();
-        for (UsbDevice usbDevice : usbDevices) {
-            HashMap<String, String> deviceMap = new HashMap();
-            deviceMap.put("name", usbDevice.getDeviceName());
-            deviceMap.put("manufacturer", usbDevice.getManufacturerName());
-            deviceMap.put("product", usbDevice.getProductName());
-            deviceMap.put("deviceid", Integer.toString(usbDevice.getDeviceId()));
-            deviceMap.put("vendorid", Integer.toString(usbDevice.getVendorId()));
-            deviceMap.put("productid", Integer.toString(usbDevice.getProductId()));
-            list.add(deviceMap);
-        }
-        result.success(list);
+  public void getUSBDeviceList(Result result) {
+    List<UsbDevice> usbDevices = adapter.getDeviceList();
+    ArrayList<HashMap> list = new ArrayList<HashMap>();
+    for (UsbDevice usbDevice : usbDevices) {
+      HashMap<String, String> deviceMap = new HashMap();
+      deviceMap.put("name", usbDevice.getDeviceName());
+      deviceMap.put("manufacturer", usbDevice.getManufacturerName());
+      deviceMap.put("product", usbDevice.getProductName());
+      deviceMap.put("deviceid", Integer.toString(usbDevice.getDeviceId()));
+      deviceMap.put("vendorid", Integer.toString(usbDevice.getVendorId()));
+      deviceMap.put("productid", Integer.toString(usbDevice.getProductId()));
+      list.add(deviceMap);
     }
+    result.success(list);
+  }
 
-
-    public void connectPrinter(Integer vendorId, Integer productId, Result result) {
-        if(!adapter.selectDevice(vendorId, productId)){
-          result.success(false);
-        }else{
-          result.success(true);
-        }
+  public void connectPrinter(Integer vendorId, Integer productId, Result result) {
+    if (!adapter.selectDevice(vendorId, productId)) {
+      result.success(false);
+    } else {
+      result.success(true);
     }
+  }
 
+  public void closeConn(Result result) {
+    adapter.closeConnectionIfExists();
+    result.success(true);
+  }
 
-    public void closeConn(Result result) {
-        adapter.closeConnectionIfExists();
-        result.success(true);
-    }
+  public void printText(String text, Result result) {
+    adapter.printText(text);
+    adapter.cashdrawerOpen();
+    result.success(true);
+  }
 
-
-    public void printText(String text, Result result) {
-        adapter.printText(text);
-        result.success(true);
-    }
-
-    public void printRawData(String base64Data, Result result) {
-        adapter.printRawData(base64Data);
-        result.success(true);
-    }
+  public void printRawData(String base64Data, Result result) {
+    adapter.printRawData(base64Data);
+    adapter.cashdrawerOpen();
+    result.success(true);
+  }
 }
