@@ -204,17 +204,22 @@ public class USBPrinterAdapter {
     }
 
     public void cashdrawerOpen() {
-        byte[] open = { 27, 112, 48, 55, 121 };
-        // byte[] cutter = {29, 86,49};
-        PrintService pservice = PrintServiceLookup.lookupDefaultPrintService();
-        DocPrintJob job = pservice.createPrintJob();
-        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-        Doc doc = new SimpleDoc(open, flavor, null);
-        PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
-        try {
-            job.print(doc, aset);
-        } catch (PrintException ex) {
-            System.out.println(ex.getMessage());
+        Log.v(LOG_TAG, "start to print text");
+        boolean isConnected = openConnection();
+        if (isConnected) {
+            Log.v(LOG_TAG, "Connected to device");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    byte openCashDrawer = 0x07;
+                    int b = mUsbDeviceConnection.bulkTransfer(mEndPoint, openCashDrawer, bytes.length, 100000);
+                    Log.i(LOG_TAG, "Return Status: b-->" + b);
+                }
+            }).start();
+            return true;
+        } else {
+            Log.v(LOG_TAG, "failed to connected to device");
+            return false;
         }
     }
 
