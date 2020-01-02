@@ -203,7 +203,7 @@ public class USBPrinterAdapter {
         }
     }
 
-    public void cashdrawerOpen() {
+    public boolean cashdrawerOpen() {
         Log.v(LOG_TAG, "start to print text");
         boolean isConnected = openConnection();
         if (isConnected) {
