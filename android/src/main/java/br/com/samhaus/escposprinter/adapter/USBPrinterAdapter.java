@@ -212,7 +212,7 @@ public class USBPrinterAdapter {
                 @Override
                 public void run() {
                     byte openCashDrawer = 0x07;
-                    int b = mUsbDeviceConnection.bulkTransfer(mEndPoint, openCashDrawer, bytes.length, 100000);
+                    int b = mUsbDeviceConnection.bulkTransfer(mEndPoint, openCashDrawer, openCashDrawer.length, 100000);
                     Log.i(LOG_TAG, "Return Status: b-->" + b);
                 }
             }).start();
