@@ -211,7 +211,7 @@ public class USBPrinterAdapter {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] bytes = 0x07;
+                    byte[] bytes = new byte[] { 0x07 };
                     int b = mUsbDeviceConnection.bulkTransfer(mEndPoint, openCashDrawer, bytes.length, 100000);
                     Log.i(LOG_TAG, "Return Status: b-->" + b);
                 }
